@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if ! flatpak info org.wireshark.Wireshark > /dev/null 2>&1; then
+    echo "Error: Flatpak Wireshark is not installed."
+    exit 1
+fi
+
+interfaces=($(ip -o link show | awk -F': ' '{print $2}'))
+
+if [ ${#interfaces[@]} -eq 0 ]; then
+    echo "No network interfaces found."
+    exit 1
+fi
+
+echo "Available network interfaces:"
+for i in "${!interfaces[@]}"; do
+    echo "$((i+1)). ${interfaces[$i]}"
+done
+
+read -p "Select an interface by number: " choice
+if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le ${#interfaces[@]} ]; then
+    INTERFACE="${interfaces[$((choice-1))]}"
+else
+    echo "Invalid selection."
+    exit 1
+fi
+
+echo "Starting capture on interface: $INTERFACE"
+echo "You may be prompted for your administrator password."
+
+pkexec tcpdump -U -i "$INTERFACE" -w - \
+| flatpak run --branch=stable --arch=x86_64 \
+    --filesystem=host --file-forwarding=host \
+    --share=network org.wireshark.Wireshark -k -i -
