@@ -2,7 +2,7 @@
 **wireshark-flatpak-capture** is a simple bash script to allow the wireshark flatpak to capture packets via `tcpdump`.
 
 > [!NOTE]
-> This script is no longer maintained as I have found a better solution for this problem. Simply create a rootful distrobox and export wireshark, then editing the .desktop file's exec line to `Exec=pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY DBX_SUDO_PROGRAM="pkexec" /usr/bin/distrobox-enter --root -n Ubuntu-root -- wireshark %f`. (The default one does not work properly) This runs Wireshark as root in distrobox and provides access to not only network capture but also USB capture and other features.
+> This script is no longer maintained as I have found a better solution for this problem. Simply create a rootful distrobox and export wireshark, then editing the .desktop file's exec line to `Exec=pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY DBX_SUDO_PROGRAM="pkexec" /usr/bin/distrobox-enter --root -n [INSERT DISTROBOX NAME] -- wireshark %f`. (The default one does not work properly) This runs Wireshark as root in distrobox and provides access to not only network capture but also USB capture and other features.
 
 I use an atomic linux distribution, which means the root directories are not easily modified. Additionally, layering wireshark via `rpm-ostree` has its own [issues](https://github.com/fedora-silverblue/issue-tracker/issues/50). Based on this [suggestion](https://discussion.fedoraproject.org/t/silverblue-wireshark-does-not-see-network-interfaces/88916/9), I wrote a simple script to use `tcpdump` to capture the packages and pipe the output to wireshark.
 
